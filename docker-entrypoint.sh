@@ -76,7 +76,7 @@ function run_restore() {
   git remote add origin "${REMOTE}"
 
   info "Fetching remote to reset..."
-  git fetch ${REMOTE} ${BRANCH} || {
+  git fetch origin ${BRANCH} || {
     error "Fetch failed (exit $?)"
     continue
   }
