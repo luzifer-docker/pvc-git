@@ -74,7 +74,6 @@ function run_restore() {
 
   info "Setting up remote..."
   git remote add origin "${REMOTE}"
-  git branch -u origin "${BRANCH}"
 
   info "Fetching remote to reset..."
   git fetch ${REMOTE} ${BRANCH} || {
@@ -84,6 +83,7 @@ function run_restore() {
 
   info "Resetting to remote state..."
   git reset --hard FETCH_HEAD
+  git branch -u origin/"${BRANCH}" "${BRANCH}"
 
   [[ -z $CHOWN_UID ]] || chown -R ${CHOWN_UID}:${CHOWN_GID} .
 }
