@@ -6,6 +6,7 @@ set -euo pipefail
 : ${CHOWN_GID:=${CHOWN_UID}} # ID of the group to chown the repo files to
 : ${INTERVAL:=300}           # How often to sync with remote
 : ${LOCAL_DIR:=/data}        # Where to find the data to backup
+: ${NETRC_CONTENT:=}         # Content to put into .netrc file, base64 encoded
 : ${PING_DOWN:=}             # Send a ping (HTTP GET) to this URL when an exit-error ocurred
 : ${PING_MAX_TIME:=5}        # Time in seconds to timeout the ping request
 : ${PING_UP:=}               # Send a ping (HTTP GET) to this URL when backup finished successfully
@@ -36,6 +37,12 @@ function log() {
 
 function main() {
   pushd "${LOCAL_DIR}"
+
+  [[ -z $NETRC_CONTENT ]] || {
+    info "Creating .netrc from ENV..."
+    echo "${NETRC_CONTENT}" | base64 -d >~/.netrc
+    chmod 0600 ~/.netrc
+  }
 
   info "Marking local dir save..."
   git config --global --add safe.directory "$(pwd)"
