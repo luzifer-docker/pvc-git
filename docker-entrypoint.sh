@@ -77,6 +77,8 @@ function run_restore() {
 
   info "Resetting to remote state..."
   git reset --hard FETCH_HEAD
+
+  [[ -z $CHOWN_UID ]] || chown -R ${CHOWN_UID}:${CHOWN_GID} .
 }
 
 function run_sync() {
