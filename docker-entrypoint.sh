@@ -70,22 +70,22 @@ function run_restore() {
   fi
 
   info "Initializing empty git repository..."
-  git init -b ${BRANCH}
+  git init -b ${BRANCH} || fatal "Initializing repo failed (exit $?)"
 
   info "Setting up remote..."
-  git remote add origin "${REMOTE}"
+  git remote add origin "${REMOTE}" || fatal "Adding remote failed (exit $?)"
 
   info "Fetching remote to reset..."
-  git fetch origin ${BRANCH} || {
-    error "Fetch failed (exit $?)"
-    return 1
-  }
+  git fetch origin ${BRANCH} || fatal "Fetch failed (exit $?)"
 
   info "Resetting to remote state..."
-  git reset --hard FETCH_HEAD
-  git branch -u origin/"${BRANCH}" "${BRANCH}"
+  git reset --hard FETCH_HEAD || fatal "Resetting onto FETCH_HEAD failed (exit $?)"
+  git branch -u origin/"${BRANCH}" "${BRANCH}" || fatal "Configuring upstream branch failed (exit $?)"
 
-  [[ -z $CHOWN_UID ]] || chown -R ${CHOWN_UID}:${CHOWN_GID} .
+  [[ -z $CHOWN_UID ]] || {
+    info "Chown-ing files to ${CHOWN_UID}:${CHOWN_GID}..."
+    chown -R ${CHOWN_UID}:${CHOWN_GID} . || fatal "Chown failed (exit $?)"
+  }
 }
 
 function run_sync() {
