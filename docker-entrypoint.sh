@@ -78,7 +78,7 @@ function run_restore() {
   info "Fetching remote to reset..."
   git fetch origin ${BRANCH} || {
     error "Fetch failed (exit $?)"
-    continue
+    return 1
   }
 
   info "Resetting to remote state..."
